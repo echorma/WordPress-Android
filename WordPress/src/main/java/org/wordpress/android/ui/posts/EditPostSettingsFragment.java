@@ -714,6 +714,10 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void updatePostFormatTextView() {
+        // Post format can be updated due to a site settings fetch and it's text view might not be initialized yet
+        if (mPostFormatTextView == null) {
+            return;
+        }
         String postFormat = getPostFormatNameFromKey(mPost.getPostFormat());
         mPostFormatTextView.setText(postFormat);
     }

@@ -3,6 +3,7 @@ package org.wordpress.android.ui.posts;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -107,6 +108,7 @@ public class EditPostSettingsFragment extends Fragment {
     private PostModel mPost;
     private SiteModel mSite;
 
+    private PostSettingsListener mListener;
     private SiteSettingsInterface mSiteSettings;
 
     private TextView mExcerptTextView;
@@ -132,6 +134,9 @@ public class EditPostSettingsFragment extends Fragment {
     @Inject TaxonomyStore mTaxonomyStore;
     @Inject Dispatcher mDispatcher;
     @Inject FluxCImageLoader mImageLoader;
+
+    public interface PostSettingsListener {
+    }
 
     public static EditPostSettingsFragment newInstance(SiteModel site, int localPostId) {
         EditPostSettingsFragment fragment = new EditPostSettingsFragment();
@@ -213,6 +218,22 @@ public class EditPostSettingsFragment extends Fragment {
             // init will fetch remote settings for us
             mSiteSettings.init(true);
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof PostSettingsListener) {
+            mListener = (PostSettingsListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement PostSettingsListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override

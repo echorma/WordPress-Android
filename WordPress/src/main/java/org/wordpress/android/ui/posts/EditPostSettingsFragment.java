@@ -552,9 +552,10 @@ public class EditPostSettingsFragment extends Fragment {
             return;
         }
         int checkedItem = 0;
-        if (!TextUtils.isEmpty(mListener.getPostFormat())) {
+        String postFormat = mListener.getPostFormat();
+        if (!TextUtils.isEmpty(postFormat)) {
             for (int i = 0; i < mPostFormatKeys.size(); i++) {
-                if (mListener.getPostFormat().equals(mPostFormatKeys.get(i))) {
+                if (postFormat.equals(mPostFormatKeys.get(i))) {
                     checkedItem = i;
                     break;
                 }
@@ -771,10 +772,13 @@ public class EditPostSettingsFragment extends Fragment {
         }
         if (PostUtils.shouldPublishImmediately(mPost)) {
             mPublishDateTextView.setText(R.string.immediately);
-        } else if (!TextUtils.isEmpty(mListener.getDateCreated())){
-            String formattedDate = DateUtils.formatDateTime(getActivity(),
-                    DateTimeUtils.timestampFromIso8601Millis(mListener.getDateCreated()), getDateTimeFlags());
-            mPublishDateTextView.setText(formattedDate);
+        } else {
+            String dateCreated = mListener.getDateCreated();
+            if (!TextUtils.isEmpty(dateCreated)){
+                String formattedDate = DateUtils.formatDateTime(getActivity(),
+                        DateTimeUtils.timestampFromIso8601Millis(dateCreated), getDateTimeFlags());
+                mPublishDateTextView.setText(formattedDate);
+            }
         }
     }
 
@@ -940,9 +944,10 @@ public class EditPostSettingsFragment extends Fragment {
             return Calendar.getInstance();
         }
         Calendar calendar = Calendar.getInstance();
+        String dateCreated = mListener.getDateCreated();
         // Set the currently selected time if available
-        if (!TextUtils.isEmpty(mListener.getDateCreated())) {
-            calendar.setTime(DateTimeUtils.dateFromIso8601(mListener.getDateCreated()));
+        if (!TextUtils.isEmpty(dateCreated)) {
+            calendar.setTime(DateTimeUtils.dateFromIso8601(dateCreated));
         }
         return calendar;
     }
@@ -1072,9 +1077,9 @@ public class EditPostSettingsFragment extends Fragment {
             mLocationTextView.setText(getString(R.string.post_settings_not_set));
         } else {
             mPostLocation = mListener.getLocation();
-            mLocationTextView.setText(mListener.getLocation().getLatitude() + ", " + mListener.getLocation().getLongitude());
+            mLocationTextView.setText(mPostLocation.getLatitude() + ", " + mPostLocation.getLongitude());
             // Asynchronously get the address from the location coordinates
-            new FetchAndSetAddressAsyncTask().execute(mListener.getLocation().getLatitude(), mListener.getLocation().getLongitude());
+            new FetchAndSetAddressAsyncTask().execute(mPostLocation.getLatitude(), mPostLocation.getLongitude());
         }
     }
 

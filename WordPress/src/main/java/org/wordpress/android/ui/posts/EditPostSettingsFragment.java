@@ -47,7 +47,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.wordpress.android.R;
 import org.wordpress.android.WordPress;
 import org.wordpress.android.fluxc.Dispatcher;
-import org.wordpress.android.fluxc.generated.PostActionBuilder;
 import org.wordpress.android.fluxc.generated.SiteActionBuilder;
 import org.wordpress.android.fluxc.generated.TaxonomyActionBuilder;
 import org.wordpress.android.fluxc.model.MediaModel;
@@ -684,38 +683,32 @@ public class EditPostSettingsFragment extends Fragment {
 
     private void updateExcerpt(String excerpt) {
         mListener.setExcerpt(excerpt);
-        dispatchUpdatePostAction();
         mExcerptTextView.setText(mListener.getExcerpt());
     }
 
     private void updateSlug(String slug) {
         mListener.setSlug(slug);
-        dispatchUpdatePostAction();
         mSlugTextView.setText(mListener.getSlug());
     }
 
     private void updatePassword(String password) {
         mListener.setPassword(password);
-        dispatchUpdatePostAction();
         mPasswordTextView.setText(mListener.getPassword());
     }
 
     private void updateCategories(List<Long> categoryList) {
         mListener.setCategoryIdList(categoryList);
-        dispatchUpdatePostAction();
         updateCategoriesTextView();
     }
 
     private void updatePostStatus(String postStatus) {
         mListener.setStatus(postStatus);
-        dispatchUpdatePostAction();
         updateStatusTextView();
         updateSaveButton();
     }
 
     private void updatePostFormat(String postFormat) {
         mListener.setPostFormat(postFormat);
-        dispatchUpdatePostAction();
         updatePostFormatTextView();
     }
 
@@ -737,7 +730,6 @@ public class EditPostSettingsFragment extends Fragment {
         } else {
             mListener.setTagNameList(null);
         }
-        dispatchUpdatePostAction();
         updateTagsTextView();
     }
 
@@ -759,7 +751,6 @@ public class EditPostSettingsFragment extends Fragment {
     private void updatePublishDate(Calendar calendar) {
         mListener.setPublishDate(calendar);
         updatePublishDateTextView();
-        dispatchUpdatePostAction();
         updateSaveButton();
     }
 
@@ -792,12 +783,6 @@ public class EditPostSettingsFragment extends Fragment {
         }
         // If `sb` is empty, the hint "Not Set" will be shown instead
         mCategoriesTextView.setText(sb);
-    }
-
-    private void dispatchUpdatePostAction() {
-        mPost.setIsLocallyChanged(true);
-        mPost.setDateLocallyChanged(DateTimeUtils.iso8601FromTimestamp(System.currentTimeMillis() / 1000));
-        mDispatcher.dispatch(PostActionBuilder.newUpdatePostAction(mPost));
     }
 
     // Post Status Helpers
@@ -880,7 +865,6 @@ public class EditPostSettingsFragment extends Fragment {
 
     public void updateFeaturedImage(long featuredImageId) {
         mListener.setFeaturedImageId(featuredImageId);
-        dispatchUpdatePostAction();
         updateFeaturedImageView();
     }
 

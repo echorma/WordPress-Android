@@ -710,6 +710,9 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     public void updateStatusTextView() {
+        if (!isAdded()) {
+            return;
+        }
         String[] statuses = getResources().getStringArray(R.array.post_settings_statuses);
         int index = getCurrentPostStatusIndex();
         // We should never get an OutOfBoundsException here, but if we do,
@@ -735,7 +738,7 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void updatePostFormatTextView() {
-        // Post format can be updated due to a site settings fetch and it's text view might not be initialized yet
+        // Post format can be updated due to a site settings fetch and the textView might not have been initialized yet
         if (mPostFormatTextView == null) {
             return;
         }
@@ -818,6 +821,9 @@ public class EditPostSettingsFragment extends Fragment {
     // Post Format Helpers
 
     private void updatePostFormatKeysAndNames() {
+        if (!isAdded()) {
+            return;
+        }
         // Default values
         mPostFormatKeys = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.post_format_keys)));
         mPostFormatNames = new ArrayList<>(Arrays.asList(getResources()

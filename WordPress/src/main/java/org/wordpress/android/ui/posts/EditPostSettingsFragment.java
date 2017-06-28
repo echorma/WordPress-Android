@@ -148,6 +148,8 @@ public class EditPostSettingsFragment extends Fragment {
         String getSlug();
         String getStatus();
         List<String> getTagNameList();
+        boolean hasFeaturedImage();
+        boolean hasLocation();
         boolean isPage();
 
         // Setters
@@ -890,7 +892,7 @@ public class EditPostSettingsFragment extends Fragment {
         if (!isAdded()) {
             return;
         }
-        if (!mPost.hasFeaturedImage()) {
+        if (!mListener.hasFeaturedImage()) {
             mFeaturedImageView.setVisibility(View.GONE);
             mFeaturedImageButton.setVisibility(View.VISIBLE);
             return;
@@ -1029,7 +1031,7 @@ public class EditPostSettingsFragment extends Fragment {
         LatLng latLng = null;
         if (mPostLocation != null) {
             latLng = new LatLng(mPostLocation.getLatitude(), mPostLocation.getLongitude());
-        } else if (mPost.hasLocation()) {
+        } else if (mListener.hasLocation()) {
             PostLocation location = mListener.getLocation();
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
         }
@@ -1063,7 +1065,7 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void initLocation() {
-        if (!mPost.hasLocation()) {
+        if (!mListener.hasLocation()) {
             mPostLocation = null;
             mLocationTextView.setText(getString(R.string.post_settings_not_set));
         } else {
@@ -1080,7 +1082,7 @@ public class EditPostSettingsFragment extends Fragment {
         }
 
         // If the post doesn't have location set, show the picker directly
-        if (!mPost.hasLocation()) {
+        if (!mListener.hasLocation()) {
             showLocationPicker();
             return;
         }

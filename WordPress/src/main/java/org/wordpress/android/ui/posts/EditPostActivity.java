@@ -2399,6 +2399,16 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     }
 
     @Override
+    public boolean hasFeaturedImage() {
+        return mPost.hasFeaturedImage();
+    }
+
+    @Override
+    public boolean hasLocation() {
+        return mPost.hasLocation();
+    }
+
+    @Override
     public boolean isPage() {
         return mPost.isPage();
     }

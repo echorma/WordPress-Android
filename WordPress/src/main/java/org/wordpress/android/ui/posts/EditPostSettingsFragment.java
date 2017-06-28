@@ -102,8 +102,6 @@ public class EditPostSettingsFragment extends Fragment {
     private static final int SELECT_LIBRARY_MENU_POSITION = 100;
     private static final int CLEAR_FEATURED_IMAGE_MENU_POSITION = 101;
 
-    private SiteModel mSite;
-
     private PostSettingsListener mListener;
     private SiteSettingsInterface mSiteSettings;
 
@@ -139,6 +137,7 @@ public class EditPostSettingsFragment extends Fragment {
         String getPassword();
         String getPostFormat();
         String getPublishDate();
+        SiteModel getSite();
         String getSlug();
         PostStatus getPostStatus();
         List<String> getTagNameList();
@@ -161,12 +160,8 @@ public class EditPostSettingsFragment extends Fragment {
         void setTagNameList(List<String> tagNameList);
     }
 
-    public static EditPostSettingsFragment newInstance(SiteModel site) {
-        EditPostSettingsFragment fragment = new EditPostSettingsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(WordPress.SITE, site);
-        fragment.setArguments(bundle);
-        return fragment;
+    public static EditPostSettingsFragment newInstance() {
+        return new EditPostSettingsFragment();
     }
 
     @Override
@@ -176,37 +171,21 @@ public class EditPostSettingsFragment extends Fragment {
         mDispatcher.register(this);
         PreferenceManager.setDefaultValues(getActivity(), R.xml.account_settings, false);
 
-        updateSiteAndFetchPostOrFinishActivity(savedInstanceState);
         updatePostFormatKeysAndNames();
         fetchSiteSettingsAndUpdateDefaultPostFormat();
 
         // Update post formats and categories, in case anything changed.
-        mDispatcher.dispatch(SiteActionBuilder.newFetchPostFormatsAction(mSite));
+        SiteModel siteModel = mListener.getSite();
+        mDispatcher.dispatch(SiteActionBuilder.newFetchPostFormatsAction(siteModel));
         if (!mListener.isPage()) {
-            mDispatcher.dispatch(TaxonomyActionBuilder.newFetchCategoriesAction(mSite));
-        }
-    }
-
-    private void updateSiteAndFetchPostOrFinishActivity(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            if (getArguments() != null) {
-                mSite = (SiteModel) getArguments().getSerializable(WordPress.SITE);
-            } else {
-                mSite = (SiteModel) getActivity().getIntent().getSerializableExtra(WordPress.SITE);
-            }
-        } else {
-            mSite = (SiteModel) savedInstanceState.getSerializable(WordPress.SITE);
-        }
-
-        if (mSite == null) {
-            ToastUtils.showToast(getActivity(), R.string.blog_not_found, ToastUtils.Duration.SHORT);
-            getActivity().finish();
+            mDispatcher.dispatch(TaxonomyActionBuilder.newFetchCategoriesAction(siteModel));
         }
     }
 
     private void fetchSiteSettingsAndUpdateDefaultPostFormat() {
         // we need to fetch site settings in order to get the latest default post format
-        mSiteSettings = SiteSettingsInterface.getInterface(getActivity(), mSite, new SiteSettingsListener() {
+        SiteModel siteModel = mListener.getSite();
+        mSiteSettings = SiteSettingsInterface.getInterface(getActivity(), siteModel, new SiteSettingsListener() {
             @Override
             public void onSettingsUpdated(Exception error) {
                 if (error == null && TextUtils.isEmpty(mListener.getPostFormat())) {
@@ -244,12 +223,6 @@ public class EditPostSettingsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(WordPress.SITE, mSite);
     }
 
     @Override
@@ -507,7 +480,7 @@ public class EditPostSettingsFragment extends Fragment {
             return;
         }
         Intent categoriesIntent = new Intent(getActivity(), SelectCategoriesActivity.class);
-        categoriesIntent.putExtra(WordPress.SITE, mSite);
+        categoriesIntent.putExtra(WordPress.SITE, mListener.getSite());
         categoriesIntent.putExtra(EXTRA_POST_LOCAL_ID, mListener.getLocalPostId());
         startActivityForResult(categoriesIntent, ACTIVITY_REQUEST_CODE_SELECT_CATEGORIES);
     }
@@ -517,10 +490,11 @@ public class EditPostSettingsFragment extends Fragment {
             return;
         }
         // Fetch/refresh the tags in preparation for the PostSettingsTagsActivity
-        mDispatcher.dispatch(TaxonomyActionBuilder.newFetchTagsAction(mSite));
+        SiteModel siteModel = mListener.getSite();
+        mDispatcher.dispatch(TaxonomyActionBuilder.newFetchTagsAction(siteModel));
 
         Intent tagsIntent = new Intent(getActivity(), PostSettingsTagsActivity.class);
-        tagsIntent.putExtra(WordPress.SITE, mSite);
+        tagsIntent.putExtra(WordPress.SITE, siteModel);
         String tags = TextUtils.join(",", mListener.getTagNameList());
         tagsIntent.putExtra(PostSettingsTagsActivity.KEY_TAGS, tags);
         startActivityForResult(tagsIntent, ACTIVITY_REQUEST_CODE_SELECT_TAGS);
@@ -809,7 +783,7 @@ public class EditPostSettingsFragment extends Fragment {
                 .getStringArray(R.array.post_format_display_names)));
 
         // If we have specific values for this site, use them
-        List<PostFormatModel> postFormatModels = mSiteStore.getPostFormats(mSite);
+        List<PostFormatModel> postFormatModels = mSiteStore.getPostFormats(mListener.getSite());
         for (PostFormatModel postFormatModel : postFormatModels) {
             if (!mPostFormatKeys.contains(postFormatModel.getSlug())) {
                 mPostFormatKeys.add(postFormatModel.getSlug());
@@ -864,7 +838,8 @@ public class EditPostSettingsFragment extends Fragment {
             return;
         }
 
-        MediaModel media = mMediaStore.getSiteMediaWithId(mSite, mListener.getFeaturedImageId());
+        SiteModel site = mListener.getSite();
+        MediaModel media = mMediaStore.getSiteMediaWithId(site, mListener.getFeaturedImageId());
         if (media == null) {
             return;
         }
@@ -878,7 +853,7 @@ public class EditPostSettingsFragment extends Fragment {
         int size = Math.max(width, height);
 
         String mediaUri = media.getThumbnailUrl();
-        if (SiteUtils.isPhotonCapable(mSite)) {
+        if (SiteUtils.isPhotonCapable(site)) {
             mediaUri = PhotonUtils.getPhotonImageUrl(mediaUri, size, 0);
         }
 
@@ -890,7 +865,7 @@ public class EditPostSettingsFragment extends Fragment {
             return;
         }
         Intent intent = new Intent(getActivity(), MediaBrowserActivity.class);
-        intent.putExtra(WordPress.SITE, mSite);
+        intent.putExtra(WordPress.SITE, mListener.getSite());
         intent.putExtra(MediaBrowserActivity.ARG_BROWSER_TYPE, MediaBrowserType.SINGLE_SELECT_PICKER);
         intent.putExtra(MediaBrowserActivity.ARG_IMAGES_ONLY, true);
         startActivityForResult(intent, RequestCodes.SINGLE_SELECT_MEDIA_PICKER);

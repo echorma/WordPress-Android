@@ -1243,7 +1243,7 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
                         return new LegacyEditorFragment();
                     }
                 case 1:
-                    return EditPostSettingsFragment.newInstance(mSite);
+                    return EditPostSettingsFragment.newInstance();
                 default:
                     return EditPostPreviewFragment.newInstance(mSite);
             }
@@ -2384,6 +2384,11 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     @Override
     public String getPublishDate() {
         return mPost.getDateCreated();
+    }
+
+    @Override
+    public SiteModel getSite() {
+        return mSite;
     }
 
     @Override

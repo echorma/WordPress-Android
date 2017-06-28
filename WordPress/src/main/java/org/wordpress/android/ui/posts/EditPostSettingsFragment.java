@@ -152,6 +152,8 @@ public class EditPostSettingsFragment extends Fragment {
         boolean isPage();
 
         // Setters
+        void clearFeaturedImage();
+        void clearLocation();
         void setCategoryIdList(List<Long> categoryIdList);
         void setExcerpt(String excerpt);
         void setFeaturedImageId(long featuredImageId);
@@ -186,7 +188,7 @@ public class EditPostSettingsFragment extends Fragment {
 
         // Update post formats and categories, in case anything changed.
         mDispatcher.dispatch(SiteActionBuilder.newFetchPostFormatsAction(mSite));
-        if (!mPost.isPage()) {
+        if (!mListener.isPage()) {
             mDispatcher.dispatch(TaxonomyActionBuilder.newFetchCategoriesAction(mSite));
         }
     }
@@ -387,7 +389,7 @@ public class EditPostSettingsFragment extends Fragment {
             }
         });
 
-        if (mPost.isPage()) { // remove post specific views
+        if (mListener.isPage()) { // remove post specific views
             excerptContainer.setVisibility(View.GONE);
             categoriesContainer.setVisibility(View.GONE);
             tagsContainer.setVisibility(View.GONE);
@@ -869,7 +871,8 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void clearFeaturedImage() {
-        updateFeaturedImage(0);
+        mListener.clearFeaturedImage();
+        updateFeaturedImageView();
     }
 
     private void updateFeaturedImageView() {
@@ -1035,7 +1038,7 @@ public class EditPostSettingsFragment extends Fragment {
 
     private void setLocation(@Nullable Place place) {
         if (place == null) {
-            mPost.clearLocation();
+            mListener.clearLocation();
             mPostLocation = null;
             return;
         }

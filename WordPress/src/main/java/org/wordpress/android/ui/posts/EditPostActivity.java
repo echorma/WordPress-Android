@@ -2416,6 +2416,16 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     // Post Settings Listener - Setters
 
     @Override
+    public void clearFeaturedImage() {
+        mPost.clearFeaturedImage();
+    }
+
+    @Override
+    public void clearLocation() {
+        mPost.clearLocation();
+    }
+
+    @Override
     public void setCategoryIdList(List<Long> categoryIdList) {
         mPost.setCategoryIdList(categoryIdList);
     }

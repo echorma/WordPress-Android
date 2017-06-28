@@ -134,6 +134,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -2340,53 +2341,117 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
         }
     }
 
-    // Post Settings Listener
+    // Post Settings Listener - Getters
 
+    @Override
     public List<Long> getCategories() {
         return mPost.getCategoryIdList();
     }
 
+    @Override
     public String getDateCreated() {
         return mPost.getDateCreated();
     }
 
+    @Override
     public String getExcerpt() {
         return mPost.getExcerpt();
     }
 
+    @Override
     public long getFeaturedImageId() {
         return mPost.getFeaturedImageId();
     }
 
+    @Override
     public int getLocalPostId() {
         return mPost.getId();
     }
 
+    @Override
     public PostLocation getLocation() {
         return mPost.getLocation();
     }
 
+    @Override
     public String getPassword() {
         return mPost.getPassword();
     }
 
+    @Override
     public String getPostFormat() {
         return mPost.getPostFormat();
     }
 
+    @Override
     public String getSlug() {
         return mPost.getSlug();
     }
 
+    @Override
     public String getStatus() {
         return mPost.getStatus();
     }
 
+    @Override
     public List<String> getTagNameList() {
         return mPost.getTagNameList();
     }
 
+    @Override
     public boolean isPage() {
         return mPost.isPage();
+    }
+
+    // Post Settings Listener - Setters
+
+    @Override
+    public void setCategoryIdList(List<Long> categoryIdList) {
+        mPost.setCategoryIdList(categoryIdList);
+    }
+
+    @Override
+    public void setDateCreated(Calendar calendar) {
+        mPost.setDateCreated(DateTimeUtils.iso8601FromDate(calendar.getTime()));
+    }
+
+    @Override
+    public void setExcerpt(String excerpt) {
+        mPost.setExcerpt(excerpt);
+    }
+
+    @Override
+    public void setFeaturedImageId(long featuredImageId) {
+        mPost.setFeaturedImageId(featuredImageId);
+    }
+
+    @Override
+    public void setLocation(PostLocation postLocation) {
+        mPost.setLocation(postLocation);
+    }
+
+    @Override
+    public void setPassword(String password) {
+        mPost.setPassword(password);
+    }
+
+    @Override
+    public void setPostFormat(String postFormat) {
+        mPost.setPostFormat(postFormat);
+    }
+
+    @Override
+    public void setSlug(String slug) {
+        mPost.setSlug(slug);
+    }
+
+    @Override
+    public void setStatus(String status) {
+        mPost.setStatus(status);
+    }
+
+    @Override
+    public void setTagNameList(List<String> tagNameList) {
+        mPost.setTagNameList(tagNameList);
     }
 }

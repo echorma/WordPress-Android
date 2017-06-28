@@ -136,6 +136,7 @@ public class EditPostSettingsFragment extends Fragment {
     @Inject FluxCImageLoader mImageLoader;
 
     interface PostSettingsListener {
+        // Getters
         List<Long> getCategories();
         String getDateCreated();
         String getExcerpt();
@@ -148,6 +149,18 @@ public class EditPostSettingsFragment extends Fragment {
         String getStatus();
         List<String> getTagNameList();
         boolean isPage();
+
+        // Setters
+        void setCategoryIdList(List<Long> categoryIdList);
+        void setDateCreated(Calendar calendar);
+        void setExcerpt(String excerpt);
+        void setFeaturedImageId(long featuredImageId);
+        void setLocation(PostLocation postLocation);
+        void setPassword(String password);
+        void setPostFormat(String postFormat);
+        void setSlug(String slug);
+        void setStatus(String status);
+        void setTagNameList(List<String> tagNameList);
     }
 
     public static EditPostSettingsFragment newInstance(SiteModel site, int localPostId) {
@@ -668,56 +681,38 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void updateExcerpt(String excerpt) {
-        if (mListener.getExcerpt().equals(excerpt)) {
-            return;
-        }
-        mPost.setExcerpt(excerpt);
+        mListener.setExcerpt(excerpt);
         dispatchUpdatePostAction();
         mExcerptTextView.setText(mListener.getExcerpt());
     }
 
     private void updateSlug(String slug) {
-        if (mListener.getSlug().equalsIgnoreCase(slug)) {
-            return;
-        }
-        mPost.setSlug(slug);
+        mListener.setSlug(slug);
         dispatchUpdatePostAction();
         mSlugTextView.setText(mListener.getSlug());
     }
 
     private void updatePassword(String password) {
-        if (mListener.getPassword().equals(password)) {
-            return;
-        }
-        mPost.setPassword(password);
+        mListener.setPassword(password);
         dispatchUpdatePostAction();
         mPasswordTextView.setText(mListener.getPassword());
     }
 
     private void updateCategories(List<Long> categoryList) {
-        if (categoryList == null) {
-            return;
-        }
-        mPost.setCategoryIdList(categoryList);
+        mListener.setCategoryIdList(categoryList);
         dispatchUpdatePostAction();
         updateCategoriesTextView();
     }
 
     private void updatePostStatus(String postStatus) {
-        if (mListener.getStatus().equals(postStatus)) {
-            return;
-        }
-        mPost.setStatus(postStatus);
+        mListener.setStatus(postStatus);
         dispatchUpdatePostAction();
         updateStatusTextView();
         updateSaveButton();
     }
 
     private void updatePostFormat(String postFormat) {
-        if (mListener.getPostFormat().equals(postFormat)) {
-            return;
-        }
-        mPost.setPostFormat(postFormat);
+        mListener.setPostFormat(postFormat);
         dispatchUpdatePostAction();
         updatePostFormatTextView();
     }
@@ -736,9 +731,9 @@ public class EditPostSettingsFragment extends Fragment {
     private void updateTags(String selectedTags) {
         if (!TextUtils.isEmpty(selectedTags)) {
             String tags = selectedTags.replace("\n", " ");
-            mPost.setTagNameList(Arrays.asList(TextUtils.split(tags, ",")));
+            mListener.setTagNameList(Arrays.asList(TextUtils.split(tags, ",")));
         } else {
-            mPost.setTagNameList(null);
+            mListener.setTagNameList(null);
         }
         dispatchUpdatePostAction();
         updateTagsTextView();
@@ -760,7 +755,7 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void updatePublishDate(Calendar calendar) {
-        mPost.setDateCreated(DateTimeUtils.iso8601FromDate(calendar.getTime()));
+        mListener.setDateCreated(calendar);
         updatePublishDateTextView();
         dispatchUpdatePostAction();
         updateSaveButton();
@@ -882,11 +877,7 @@ public class EditPostSettingsFragment extends Fragment {
     // Featured Image Helpers
 
     public void updateFeaturedImage(long featuredImageId) {
-        if (mListener.getFeaturedImageId() == featuredImageId) {
-            return;
-        }
-
-        mPost.setFeaturedImageId(featuredImageId);
+        mListener.setFeaturedImageId(featuredImageId);
         dispatchUpdatePostAction();
         updateFeaturedImageView();
     }
@@ -1067,7 +1058,7 @@ public class EditPostSettingsFragment extends Fragment {
         }
         mPostLocation.setLatitude(place.getLatLng().latitude);
         mPostLocation.setLongitude(place.getLatLng().longitude);
-        mPost.setLocation(mPostLocation);
+        mListener.setLocation(mPostLocation);
         mLocationTextView.setText(place.getAddress());
     }
 

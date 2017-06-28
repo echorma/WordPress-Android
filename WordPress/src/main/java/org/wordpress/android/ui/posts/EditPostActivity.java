@@ -73,6 +73,7 @@ import org.wordpress.android.fluxc.model.MediaModel;
 import org.wordpress.android.fluxc.model.MediaModel.UploadState;
 import org.wordpress.android.fluxc.model.PostModel;
 import org.wordpress.android.fluxc.model.SiteModel;
+import org.wordpress.android.fluxc.model.post.PostLocation;
 import org.wordpress.android.fluxc.model.post.PostStatus;
 import org.wordpress.android.fluxc.store.AccountStore;
 import org.wordpress.android.fluxc.store.AccountStore.OnAccountChanged;
@@ -2351,5 +2352,55 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
         else {
             onUploadProgress(event.media, event.progress);
         }
+    }
+
+    // Post Settings Listener
+
+    public List<Long> getCategories() {
+        return mPost.getCategoryIdList();
+    }
+
+    public String getDateCreated() {
+        return mPost.getDateCreated();
+    }
+
+    public String getExcerpt() {
+        return mPost.getExcerpt();
+    }
+
+    public long getFeaturedImageId() {
+        return mPost.getFeaturedImageId();
+    }
+
+    public int getLocalPostId() {
+        return mPost.getId();
+    }
+
+    public PostLocation getLocation() {
+        return mPost.getLocation();
+    }
+
+    public String getPassword() {
+        return mPost.getPassword();
+    }
+
+    public String getPostFormat() {
+        return mPost.getPostFormat();
+    }
+
+    public String getSlug() {
+        return mPost.getSlug();
+    }
+
+    public String getStatus() {
+        return mPost.getStatus();
+    }
+
+    public List<String> getTagNameList() {
+        return mPost.getTagNameList();
+    }
+
+    public boolean isPage() {
+        return mPost.isPage();
     }
 }

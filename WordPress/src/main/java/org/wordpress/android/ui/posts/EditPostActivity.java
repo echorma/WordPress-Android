@@ -73,6 +73,7 @@ import org.wordpress.android.fluxc.model.MediaModel;
 import org.wordpress.android.fluxc.model.MediaModel.MediaUploadState;
 import org.wordpress.android.fluxc.model.PostModel;
 import org.wordpress.android.fluxc.model.SiteModel;
+import org.wordpress.android.fluxc.model.TermModel;
 import org.wordpress.android.fluxc.model.post.PostLocation;
 import org.wordpress.android.fluxc.model.post.PostStatus;
 import org.wordpress.android.fluxc.store.AccountStore;
@@ -83,6 +84,7 @@ import org.wordpress.android.fluxc.store.MediaStore.MediaPayload;
 import org.wordpress.android.fluxc.store.MediaStore.OnMediaChanged;
 import org.wordpress.android.fluxc.store.PostStore;
 import org.wordpress.android.fluxc.store.SiteStore;
+import org.wordpress.android.fluxc.store.TaxonomyStore;
 import org.wordpress.android.fluxc.tools.FluxCImageLoader;
 import org.wordpress.android.ui.ActivityId;
 import org.wordpress.android.ui.ActivityLauncher;
@@ -218,6 +220,7 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     @Inject SiteStore mSiteStore;
     @Inject PostStore mPostStore;
     @Inject MediaStore mMediaStore;
+    @Inject TaxonomyStore mTaxonomyStore;
     @Inject FluxCImageLoader mImageLoader;
 
     private SiteModel mSite;
@@ -2344,8 +2347,8 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     // Post Settings Listener - Getters
 
     @Override
-    public List<Long> getCategories() {
-        return mPost.getCategoryIdList();
+    public List<TermModel> getCategories() {
+        return mTaxonomyStore.getCategoriesForPost(mPost, mSite);
     }
 
     @Override

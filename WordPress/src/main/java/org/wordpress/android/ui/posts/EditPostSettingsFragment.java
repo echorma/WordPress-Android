@@ -59,7 +59,6 @@ import org.wordpress.android.fluxc.model.post.PostStatus;
 import org.wordpress.android.fluxc.store.MediaStore;
 import org.wordpress.android.fluxc.store.PostStore;
 import org.wordpress.android.fluxc.store.SiteStore;
-import org.wordpress.android.fluxc.store.TaxonomyStore;
 import org.wordpress.android.fluxc.store.TaxonomyStore.OnTaxonomyChanged;
 import org.wordpress.android.fluxc.tools.FluxCImageLoader;
 import org.wordpress.android.ui.RequestCodes;
@@ -130,13 +129,12 @@ public class EditPostSettingsFragment extends Fragment {
     @Inject SiteStore mSiteStore;
     @Inject PostStore mPostStore;
     @Inject MediaStore mMediaStore;
-    @Inject TaxonomyStore mTaxonomyStore;
     @Inject Dispatcher mDispatcher;
     @Inject FluxCImageLoader mImageLoader;
 
     interface PostSettingsListener {
         // Getters
-        List<Long> getCategories();
+        List<TermModel> getCategories();
         String getExcerpt();
         long getFeaturedImageId();
         int getLocalPostId();
@@ -772,9 +770,8 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void updateCategoriesTextView() {
-        List<TermModel> categories = mTaxonomyStore.getCategoriesForPost(mPost, mSite);
         StringBuilder sb = new StringBuilder();
-        Iterator<TermModel> it = categories.iterator();
+        Iterator<TermModel> it = mListener.getCategories().iterator();
         if (it.hasNext()) {
             sb.append(it.next().getName());
             while (it.hasNext()) {

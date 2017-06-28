@@ -2349,11 +2349,6 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     }
 
     @Override
-    public String getDateCreated() {
-        return mPost.getDateCreated();
-    }
-
-    @Override
     public String getExcerpt() {
         return mPost.getExcerpt();
     }
@@ -2384,6 +2379,11 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     }
 
     @Override
+    public String getPublishDate() {
+        return mPost.getDateCreated();
+    }
+
+    @Override
     public String getSlug() {
         return mPost.getSlug();
     }
@@ -2411,11 +2411,6 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     }
 
     @Override
-    public void setDateCreated(Calendar calendar) {
-        mPost.setDateCreated(DateTimeUtils.iso8601FromDate(calendar.getTime()));
-    }
-
-    @Override
     public void setExcerpt(String excerpt) {
         mPost.setExcerpt(excerpt);
     }
@@ -2438,6 +2433,11 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     @Override
     public void setPostFormat(String postFormat) {
         mPost.setPostFormat(postFormat);
+    }
+
+    @Override
+    public void setPublishDate(Calendar calendar) {
+        mPost.setDateCreated(DateTimeUtils.iso8601FromDate(calendar.getTime()));
     }
 
     @Override

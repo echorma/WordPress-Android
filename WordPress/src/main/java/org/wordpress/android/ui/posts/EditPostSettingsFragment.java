@@ -138,13 +138,13 @@ public class EditPostSettingsFragment extends Fragment {
     interface PostSettingsListener {
         // Getters
         List<Long> getCategories();
-        String getDateCreated();
         String getExcerpt();
         long getFeaturedImageId();
         int getLocalPostId();
         PostLocation getLocation();
         String getPassword();
         String getPostFormat();
+        String getPublishDate();
         String getSlug();
         String getStatus();
         List<String> getTagNameList();
@@ -152,12 +152,12 @@ public class EditPostSettingsFragment extends Fragment {
 
         // Setters
         void setCategoryIdList(List<Long> categoryIdList);
-        void setDateCreated(Calendar calendar);
         void setExcerpt(String excerpt);
         void setFeaturedImageId(long featuredImageId);
         void setLocation(PostLocation postLocation);
         void setPassword(String password);
         void setPostFormat(String postFormat);
+        void setPublishDate(Calendar calendar);
         void setSlug(String slug);
         void setStatus(String status);
         void setTagNameList(List<String> tagNameList);
@@ -755,7 +755,7 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void updatePublishDate(Calendar calendar) {
-        mListener.setDateCreated(calendar);
+        mListener.setPublishDate(calendar);
         updatePublishDateTextView();
         dispatchUpdatePostAction();
         updateSaveButton();
@@ -768,7 +768,7 @@ public class EditPostSettingsFragment extends Fragment {
         if (PostUtils.shouldPublishImmediately(mPost)) {
             mPublishDateTextView.setText(R.string.immediately);
         } else {
-            String dateCreated = mListener.getDateCreated();
+            String dateCreated = mListener.getPublishDate();
             if (!TextUtils.isEmpty(dateCreated)){
                 String formattedDate = DateUtils.formatDateTime(getActivity(),
                         DateTimeUtils.timestampFromIso8601Millis(dateCreated), getDateTimeFlags());
@@ -935,7 +935,7 @@ public class EditPostSettingsFragment extends Fragment {
             return Calendar.getInstance();
         }
         Calendar calendar = Calendar.getInstance();
-        String dateCreated = mListener.getDateCreated();
+        String dateCreated = mListener.getPublishDate();
         // Set the currently selected time if available
         if (!TextUtils.isEmpty(dateCreated)) {
             calendar.setTime(DateTimeUtils.dateFromIso8601(dateCreated));

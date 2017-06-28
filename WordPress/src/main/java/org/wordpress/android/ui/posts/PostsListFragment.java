@@ -46,6 +46,7 @@ import org.wordpress.android.ui.posts.adapters.PostsListAdapter.LoadMode;
 import org.wordpress.android.ui.posts.services.PostEvents;
 import org.wordpress.android.ui.posts.services.PostUploadService;
 import org.wordpress.android.util.AniUtils;
+import org.wordpress.android.util.DateTimeUtils;
 import org.wordpress.android.util.NetworkUtils;
 import org.wordpress.android.util.ToastUtils;
 import org.wordpress.android.util.helpers.SwipeToRefreshHelper;
@@ -55,6 +56,7 @@ import org.wordpress.android.widgets.PostListButton;
 import org.wordpress.android.widgets.RecyclerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -523,7 +525,7 @@ public class PostsListFragment extends Fragment
             return;
         }
 
-        PostUtils.updatePublishDateIfShouldBePublishedImmediately(post);
+        post.setDateCreated(DateTimeUtils.iso8601FromDate(new Date()));
         post.setStatus(PostStatus.PUBLISHED.toString());
 
         PostUploadService.addPostToUpload(post);

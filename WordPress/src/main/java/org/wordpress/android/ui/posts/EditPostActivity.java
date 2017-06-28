@@ -135,6 +135,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -871,8 +872,7 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
         if (mEditPostSettingsFragment != null) {
             mEditPostSettingsFragment.updatePostSettings(mPost);
         }
-        PostUtils.updatePublishDateIfShouldBePublishedImmediately(mPost);
-
+        mPost.setDateCreated(DateTimeUtils.iso8601FromDate(new Date()));
         mPost.setDateLocallyChanged(DateTimeUtils.iso8601FromTimestamp(System.currentTimeMillis() / 1000));
     }
 

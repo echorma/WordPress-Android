@@ -620,6 +620,7 @@ public class EditPostSettingsFragment extends Fragment {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
         Resources resources = getResources();
+        PostStatus postStatus = mListener.getPostStatus();
 
         final DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), null, year, month, day);
         datePickerDialog.setTitle(R.string.select_date);
@@ -633,7 +634,7 @@ public class EditPostSettingsFragment extends Fragment {
                         showPostTimeSelectionDialog(selectedYear, selectedMonth, selectedDay);
                     }
                 });
-        String neutralButtonTitle = PostUtils.shouldPublishImmediatelyOptionBeAvailable(mPost)
+        String neutralButtonTitle = PostUtils.shouldPublishImmediatelyOptionBeAvailable(postStatus)
                 ? resources.getString(R.string.immediately) : resources.getString(R.string.now);
         datePickerDialog.setButton(DialogInterface.BUTTON_NEUTRAL, neutralButtonTitle,
                 new DialogInterface.OnClickListener() {
@@ -647,7 +648,7 @@ public class EditPostSettingsFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                     }
                 });
-        if (PostUtils.shouldPublishImmediatelyOptionBeAvailable(mPost)) {
+        if (PostUtils.shouldPublishImmediatelyOptionBeAvailable(postStatus)) {
             // We shouldn't let the user pick a past date since we'll just override it to Immediately if they do
             // We can't set the min date to now, so we need to subtract some amount of time
             datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
@@ -760,15 +761,13 @@ public class EditPostSettingsFragment extends Fragment {
         if (!isAdded()) {
             return;
         }
-        if (PostUtils.shouldPublishImmediately(mPost)) {
+        String dateCreated = mListener.getPublishDate();
+        if (PostUtils.shouldPublishImmediately(mListener.getPostStatus(), dateCreated)) {
             mPublishDateTextView.setText(R.string.immediately);
-        } else {
-            String dateCreated = mListener.getPublishDate();
-            if (!TextUtils.isEmpty(dateCreated)){
-                String formattedDate = DateUtils.formatDateTime(getActivity(),
-                        DateTimeUtils.timestampFromIso8601Millis(dateCreated), getDateTimeFlags());
-                mPublishDateTextView.setText(formattedDate);
-            }
+        } else if (!TextUtils.isEmpty(dateCreated)){
+            String formattedDate = DateUtils.formatDateTime(getActivity(),
+                    DateTimeUtils.timestampFromIso8601Millis(dateCreated), getDateTimeFlags());
+            mPublishDateTextView.setText(formattedDate);
         }
     }
 
@@ -920,11 +919,11 @@ public class EditPostSettingsFragment extends Fragment {
     // Publish Date Helpers
 
     private Calendar getCurrentPublishDateAsCalendar() {
-        if (PostUtils.shouldPublishImmediately(mPost)) {
+        String dateCreated = mListener.getPublishDate();
+        if (PostUtils.shouldPublishImmediately(mListener.getPostStatus(), dateCreated)) {
             return Calendar.getInstance();
         }
         Calendar calendar = Calendar.getInstance();
-        String dateCreated = mListener.getPublishDate();
         // Set the currently selected time if available
         if (!TextUtils.isEmpty(dateCreated)) {
             calendar.setTime(DateTimeUtils.dateFromIso8601(dateCreated));

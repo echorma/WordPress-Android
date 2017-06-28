@@ -2389,8 +2389,8 @@ public class EditPostActivity extends AppCompatActivity implements EditorFragmen
     }
 
     @Override
-    public String getStatus() {
-        return mPost.getStatus();
+    public PostStatus getPostStatus() {
+        return PostStatus.fromPost(mPost);
     }
 
     @Override

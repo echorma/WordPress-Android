@@ -145,7 +145,7 @@ public class EditPostSettingsFragment extends Fragment {
         String getPostFormat();
         String getPublishDate();
         String getSlug();
-        String getStatus();
+        PostStatus getPostStatus();
         List<String> getTagNameList();
         boolean hasFeaturedImage();
         boolean hasLocation();
@@ -805,7 +805,7 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private int getCurrentPostStatusIndex() {
-        switch (PostStatus.fromPost(mPost)) {
+        switch (mListener.getPostStatus()) {
             case DRAFT:
                 return 1;
             case PENDING:

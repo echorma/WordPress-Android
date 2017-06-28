@@ -57,7 +57,6 @@ import org.wordpress.android.fluxc.model.TermModel;
 import org.wordpress.android.fluxc.model.post.PostLocation;
 import org.wordpress.android.fluxc.model.post.PostStatus;
 import org.wordpress.android.fluxc.store.MediaStore;
-import org.wordpress.android.fluxc.store.PostStore;
 import org.wordpress.android.fluxc.store.SiteStore;
 import org.wordpress.android.fluxc.store.TaxonomyStore.OnTaxonomyChanged;
 import org.wordpress.android.fluxc.tools.FluxCImageLoader;
@@ -103,7 +102,6 @@ public class EditPostSettingsFragment extends Fragment {
     private static final int SELECT_LIBRARY_MENU_POSITION = 100;
     private static final int CLEAR_FEATURED_IMAGE_MENU_POSITION = 101;
 
-    private PostModel mPost;
     private SiteModel mSite;
 
     private PostSettingsListener mListener;
@@ -127,7 +125,6 @@ public class EditPostSettingsFragment extends Fragment {
     private ArrayList<String> mPostFormatNames;
 
     @Inject SiteStore mSiteStore;
-    @Inject PostStore mPostStore;
     @Inject MediaStore mMediaStore;
     @Inject Dispatcher mDispatcher;
     @Inject FluxCImageLoader mImageLoader;
@@ -164,11 +161,10 @@ public class EditPostSettingsFragment extends Fragment {
         void setTagNameList(List<String> tagNameList);
     }
 
-    public static EditPostSettingsFragment newInstance(SiteModel site, int localPostId) {
+    public static EditPostSettingsFragment newInstance(SiteModel site) {
         EditPostSettingsFragment fragment = new EditPostSettingsFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(WordPress.SITE, site);
-        bundle.putSerializable(EXTRA_POST_LOCAL_ID, localPostId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -192,30 +188,18 @@ public class EditPostSettingsFragment extends Fragment {
     }
 
     private void updateSiteAndFetchPostOrFinishActivity(Bundle savedInstanceState) {
-        int localPostId;
         if (savedInstanceState == null) {
             if (getArguments() != null) {
                 mSite = (SiteModel) getArguments().getSerializable(WordPress.SITE);
-                localPostId = getArguments().getInt(EXTRA_POST_LOCAL_ID);
             } else {
                 mSite = (SiteModel) getActivity().getIntent().getSerializableExtra(WordPress.SITE);
-                localPostId = getActivity().getIntent().getIntExtra(EXTRA_POST_LOCAL_ID, 0);
             }
         } else {
             mSite = (SiteModel) savedInstanceState.getSerializable(WordPress.SITE);
-            localPostId = savedInstanceState.getInt(EXTRA_POST_LOCAL_ID);
         }
 
         if (mSite == null) {
             ToastUtils.showToast(getActivity(), R.string.blog_not_found, ToastUtils.Duration.SHORT);
-            getActivity().finish();
-        }
-
-        if (localPostId != 0) {
-            mPost = mPostStore.getPostByLocalPostId(localPostId);
-        }
-        if (mPost == null) {
-            ToastUtils.showToast(getActivity(), R.string.post_not_found, ToastUtils.Duration.SHORT);
             getActivity().finish();
         }
     }
@@ -266,7 +250,6 @@ public class EditPostSettingsFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(WordPress.SITE, mSite);
-        outState.putSerializable(EXTRA_POST_LOCAL_ID, mListener.getLocalPostId());
     }
 
     @Override
@@ -279,7 +262,7 @@ public class EditPostSettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.edit_post_settings_fragment, container, false);
 
-        if (rootView == null || mPost == null) {
+        if (rootView == null) {
             return null;
         }
 
